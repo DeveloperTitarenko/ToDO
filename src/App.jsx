@@ -2,12 +2,23 @@ import React, {useState, useEffect, useMemo} from "react";
 import "./styles/index.scss";
 import icon from './img/icon.png';
 import basket from './img/basket.png'
+import {onHidden} from "web-vitals/dist/modules/lib/onHidden";
 
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("all");
+
+  useEffect(() => {
+    const localTasks = localStorage.getItem("tasks")
+    localTasks && setTasks(JSON.parse(localTasks))
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks))
+  }, [tasks])
+
 
   const numLeft = useMemo(() => tasks.filter(({checked}) => !checked).length, [tasks]);
   const displayedTasks = useMemo(() => {
@@ -29,9 +40,7 @@ const App = () => {
     }
   }, [tasks, status]);
 
-  useEffect(() => {
-    console.log(tasks)
-  }, [tasks])
+
 
   const handleOnClick = () => {
     setTasks(prevTasks => [...prevTasks, {
@@ -66,34 +75,23 @@ const App = () => {
   }
 
   const allChecked = () => {
-    setTasks(prevTasks => prevTasks.map((task) => {
-      if (tasks.some(item => item.checked === false)) {
-        return (
-          {
-            ...task,
-            checked: true
-          }
-        )
-      } else if (tasks.every(item => item.checked === true)) {
-        return (
-          {
-            ...task,
-            checked: false
-          }
-        )
+    setTasks(prevTasks => {
+      if(prevTasks.every(task => task.checked)){
+        return prevTasks.map(task => ({...task, checked: false}))
+      }else {
+        return prevTasks.map(task => ({...task, checked: true}))
       }
-
-    }))
+    })
   }
 
   return (
     <div className="todos-content">
       <h1>todos</h1>
       <div className="addTask">
-        <button className={'btn-check'} onClick={allChecked}><img src={icon} alt=""/></button>
-        <input className={'addTasked'} value={value} onChange={(event => setValue(event.target.value))} type="text"
+        <button className="btn-check" onClick={allChecked}><img src={icon} alt=""/></button>
+        <input className="add-tasked" value={value} onChange={(event => setValue(event.target.value))} type="text"
                placeholder={'What needs to be done?'}/>
-        <button className={'btn-add-task'} onClick={() => {
+        <button className="btn-add-task" onClick={() => {
           if (value !== '') {
             handleOnClick();
           }
@@ -101,33 +99,35 @@ const App = () => {
           Add
         </button>
       </div>
-
-      {displayedTasks.map(task => {
-        return (
-          <div key={task.id} className={'tasks'}>
-            <div>
-              <input checked={task.checked} type="checkbox" onChange={() => checkBox(task.id)}/>
-              <span
-                style={{
-                  textDecoration: task.checked ? 'line-through' : 'none'
-                }}
-              >
+      <div className="tasks-block">
+        {displayedTasks.map(task => {
+          return (
+            <div key={task.id} className="tasks">
+              <div>
+                <input checked={task.checked} type="checkbox" onChange={() => checkBox(task.id)}/>
+                <span
+                  style={{
+                    textDecoration: task.checked ? 'line-through' : 'none'
+                  }}
+                >
                 {task.text}
             </span>
+              </div>
+              <button onClick={() => {
+                deleteTask(task.id)
+              }}><img src={basket} alt=""/>
+              </button>
             </div>
-            <button onClick={() => {
-              deleteTask(task.id)
-            }}><img src={basket} alt=""/>
-            </button>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
+
       <div className="button-list">
         <div>{numLeft} left item</div>
-        <button className={'btn'} onClick={() => setStatus("all")}>All</button>
-        <button className={'btn'} onClick={() => setStatus("active")}>Active</button>
-        <button className={'btn'} onClick={() => setStatus("completed")}>Completed</button>
-        <button className={'btn'} onClick={deleteAll}>Completed Delete</button>
+        <button className="btn" onClick={() => setStatus("all")}>All</button>
+        <button className="btn" onClick={() => setStatus("active")}>Active</button>
+        <button className="btn" onClick={() => setStatus("completed")}>Completed</button>
+        <button className="btn" onClick={deleteAll}>Completed Delete</button>
       </div>
     </div>
   );
