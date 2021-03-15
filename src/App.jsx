@@ -3,6 +3,8 @@ import "./styles/index.scss";
 import {Route, NavLink, Switch, Redirect} from 'react-router-dom'
 import LogIn from "./components/LogIn/LogIn";
 import ToDo from "./components/ToDo/ToDo";
+import Registration from "./components/Registration/Registration";
+
 
 
 const App = () => {
@@ -22,6 +24,7 @@ const App = () => {
         <div className="todos-content">
           <h1>todos</h1>
           <Route path='/' exact component={LogIn}/>
+          <Route path='/registration' component={Registration}/>
           <Route path='/todo' component={ToDo}/>
         </div>
         <Redirect to={'/'}/>

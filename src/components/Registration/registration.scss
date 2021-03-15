@@ -1,34 +1,23 @@
-.log-in{
-  max-width: 300px;
+.registration{
   display: flex;
   flex-direction: column;
+  max-width: 400px;
   padding: 5px;
   border: 1px solid black;
   box-shadow: 1px 1px 10px 0 #41454A;
-  background-color: white;
   border-radius: 5px;
   margin: 0 auto;
-  background-color: #f5f5f5;;
-  h2{
+  background-color: #f5f5f5;
+  span{
     text-align: center;
     font-size: 30px;
     font-weight: 100;
     color: black;
     margin-bottom: 0;
   }
-  button{
-    padding: 3px;
-    margin: 0 auto;
-    background-color: #5cb3ed;
-    border-radius: 5px;
-    color: white;
-    padding: 3px;
-    font-size: 15px;
-  }
   input{
     margin-bottom: 10px;
     max-width: 300px;
-
     border: 1px solid #cccccc;
     border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -40,11 +29,14 @@
     width: 320px;
     color: black;
     font-size: 15px;
-    font-family: Tahoma;
-
-    &:focus{
-      border: 2px solid  black;
-    }
   }
-
+  button{
+    padding: 3px;
+    margin: 0 auto;
+    background-color: #5cb3ed;
+    border-radius: 5px;
+    color: white;
+    padding: 3px;
+    font-size: 15px;
+  }
 }

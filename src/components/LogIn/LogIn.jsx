@@ -28,7 +28,12 @@ const LogIn = () => {
       <h2>Log in</h2>
       <input type="text" placeholder="Login" login={login}  onChange={(event => setLogin(event.target.value))}/>
       <input type="password" placeholder="Password" password={password} onChange={(event => setPassword(event.target.value))}/>
-      <button onClick={checkData}>Log in</button>
+      <div className="btn">
+        <button onClick={checkData}>Log in</button>
+        <button onClick={() => {
+          history.push('/registration')
+        }}>Registration</button>
+      </div>
     </div>
   )
 }
