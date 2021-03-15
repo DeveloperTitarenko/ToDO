@@ -13,7 +13,10 @@ const App = () => {
       <nav>
         <ul>
           <li>
-            <NavLink to='/'>LogIn</NavLink>
+            <NavLink to='/registration'>Registration</NavLink>
+          </li>
+          <li>
+            <NavLink to='/'>Log In</NavLink>
           </li>
           <li>
             <NavLink to='/todo'>ToDo</NavLink>
@@ -23,7 +26,7 @@ const App = () => {
       <Switch>
         <div className="todos-content">
           <h1>todos</h1>
-          <Route path='/' exact component={LogIn}/>
+          <Route path='/' exact  component={LogIn}/>
           <Route path='/registration' component={Registration}/>
           <Route path='/todo' component={ToDo}/>
         </div>

@@ -16,13 +16,11 @@
     margin-bottom: 0;
   }
   input{
-    margin-bottom: 10px;
-    max-width: 300px;
+    margin-bottom: 8px;
     border: 1px solid #cccccc;
     border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    -khtml-border-radius: 3px;
     background: #ffffff !important;
     outline: none;
     height: 24px;
@@ -36,7 +34,7 @@
     background-color: #5cb3ed;
     border-radius: 5px;
     color: white;
-    padding: 3px;
     font-size: 15px;
+    border: none;
   }
 }
