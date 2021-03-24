@@ -2,22 +2,37 @@ import React, {useState, useEffect, useMemo} from "react";
 import icon from "../../img/icon.png";
 import basket from "../../img/basket.png";
 import {useHistory} from 'react-router-dom';
+import axios from "axios"
+
+
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5000"
+})
 
 const ToDo = () => {
+
   const [tasks, setTasks] = useState([]);
   const [value, setValue] = useState("");
   const [status, setStatus] = useState("all");
   const history = useHistory()
 
-  useEffect(() => {
-    const localTasks = localStorage.getItem("tasks")
-    const access = JSON.parse(localStorage.getItem('access'))
-    access === true ? localTasks && setTasks(JSON.parse(localTasks)) : history.push('/')
-  }, [])
+  const getCurrData = () => {
+    axiosInstance.get("/task", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+      .then((response) => {
+        setTasks(response.data)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
 
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks))
-  }, [tasks])
+    getCurrData()
+  }, [])
 
 
   const numLeft = useMemo(() => tasks.filter(({checked}) => !checked).length, [tasks]);
@@ -42,58 +57,69 @@ const ToDo = () => {
 
 
   const handleOnClick = () => {
-    setTasks(prevTasks => [...prevTasks, {
-      id: new Date().getTime(),
-      checked: false,
-      text: value,
-    }])
-    setValue("")
+    if (value !== '') {
+      axiosInstance.post("/task", {value}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      })
+        .then(() => getCurrData())
+        .catch(err => console.log(err))
+    }
+    setValue('')
   }
 
   const deleteTask = (id) => {
-    setTasks(tasks => tasks.filter(task => task.id !== id));
-  }
-
-  const deleteAll = () => {
-    setTasks(prevTasks => prevTasks.filter(task => task.checked === false))
-  }
-
-  const checkBox = (taskId) => {
-    setTasks(prevTasks => prevTasks.map((task) => {
-      if (task.id === taskId) {
-        return (
-          {
-            ...task,
-            checked: !task.checked
-          }
-        )
+    axiosInstance.delete(`/task/${id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       }
-      return task
-    }))
+    })
+      .then(() => getCurrData())
+      .catch(err => console.log(err))
+  }
 
+  const deleteAllCompleted = () => {
+    axiosInstance.delete('/task', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+      .then(() => getCurrData())
+      .catch(err => console.log(err))
+  }
+
+  const checkBox = (Id) => {
+    axiosInstance.put(`/task/${Id}`,{}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    })
+      .then(() => getCurrData())
+      .catch(err => console.log(err))
   }
 
   const allChecked = () => {
-    setTasks(prevTasks => {
-      if (prevTasks.every(task => task.checked)) {
-        return prevTasks.map(task => ({...task, checked: false}))
-      } else {
-        return prevTasks.map(task => ({...task, checked: true}))
+    axiosInstance.put('/task',{}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`
       }
     })
+      .then(() => getCurrData())
+      .catch(err => console.log(err))
   }
 
   return (
     <div className="todo-tasks">
       <div className="addTask">
         <button className="btn-check" onClick={allChecked}><img src={icon} alt=""/></button>
-        <input className="add-tasked" value={value} onChange={(event => setValue(event.target.value))} type="text"
-               placeholder={'What needs to be done?'}/>
-        <button className="btn-add-task" onClick={() => {
-          if (value !== '') {
-            handleOnClick();
+        <input className="add-tasked" value={value} onChange={(event => setValue(event.target.value))} onKeyPress={(event) => {
+          if(event.key == 'Enter'){
+            handleOnClick()
           }
-        }}>
+        }} type="text"
+               placeholder={'What needs to be done?'}/>
+        <button className="btn-add-task" onClick={handleOnClick}>
           Add
         </button>
       </div>
@@ -102,17 +128,17 @@ const ToDo = () => {
           return (
             <div key={task.id} className="tasks">
               <div>
-                <input checked={task.checked} type="checkbox" onChange={() => checkBox(task.id)}/>
+                <input checked={task.checked} type="checkbox" onChange={() => checkBox(task._id)}/>
                 <span
                   style={{
                     textDecoration: task.checked ? 'line-through' : 'none'
                   }}
                 >
-                {task.text}
+                {task.value}
             </span>
               </div>
               <button onClick={() => {
-                deleteTask(task.id)
+                deleteTask(task._id)
               }}><img src={basket} alt=""/>
               </button>
             </div>
@@ -124,7 +150,7 @@ const ToDo = () => {
         <button className="btn" onClick={() => setStatus("all")}>All</button>
         <button className="btn" onClick={() => setStatus("active")}>Active</button>
         <button className="btn" onClick={() => setStatus("completed")}>Completed</button>
-        <button className="btn" onClick={deleteAll}>Completed Delete</button>
+        <button className="btn" onClick={deleteAllCompleted}>Completed Delete</button>
       </div>
     </div>
   )

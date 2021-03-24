@@ -8,19 +8,12 @@ const LogIn = () => {
 
   const history = useHistory()
 
-  useEffect(() => {
-    const access = JSON.parse(localStorage.getItem('access'))
-    access === true ? history.push('/todo'): history.push('/')
-  },[])
+
 
   const checkData = () => {
-    if(login === 'admin' && password === '1234'){
-    localStorage.setItem('access', JSON.stringify(true))
-      history.push("/todo")
-    }else{
-      localStorage.setItem('access', 'false')
-      history.push("/")
-    }
+    const token = localStorage.getItem('token')
+
+
   }
 
   return(
