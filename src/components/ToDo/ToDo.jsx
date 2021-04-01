@@ -29,6 +29,14 @@ const ToDo = () => {
         console.log(err)
       })
   }
+  useEffect(() => {
+    const LocalToken = localStorage.getItem('token')
+    if(LocalToken){
+      history.push('/todo')
+    }else{
+      history.push('/')
+    }
+  }, [])
 
   useEffect(() => {
     getCurrData()
@@ -90,7 +98,7 @@ const ToDo = () => {
   }
 
   const checkBox = (Id) => {
-    axiosInstance.put(`/task/${Id}`,{}, {
+    axiosInstance.put(`/task/${Id}`, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -100,7 +108,7 @@ const ToDo = () => {
   }
 
   const allChecked = () => {
-    axiosInstance.put('/task',{}, {
+    axiosInstance.put('/task', {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
@@ -113,12 +121,17 @@ const ToDo = () => {
     <div className="todo-tasks">
       <div className="addTask">
         <button className="btn-check" onClick={allChecked}><img src={icon} alt=""/></button>
-        <input className="add-tasked" value={value} onChange={(event => setValue(event.target.value))} onKeyPress={(event) => {
-          if(event.key == 'Enter'){
-            handleOnClick()
-          }
-        }} type="text"
-               placeholder={'What needs to be done?'}/>
+        <input className="add-tasked"
+               value={value}
+               onChange={(event => setValue(event.target.value))}
+               onKeyPress={(event) => {
+                 if (event.key == 'Enter') {
+                   handleOnClick()
+                 }
+               }}
+               type="text"
+               placeholder={'What needs to be done?'}
+        />
         <button className="btn-add-task" onClick={handleOnClick}>
           Add
         </button>

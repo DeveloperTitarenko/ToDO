@@ -13,9 +13,6 @@ const App = () => {
       <nav>
         <ul>
           <li>
-            <NavLink to='/registration'>Registration</NavLink>
-          </li>
-          <li>
             <NavLink to='/'>Log In</NavLink>
           </li>
           <li>
